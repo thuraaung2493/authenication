@@ -1,0 +1,65 @@
+{
+  "name": "thuraaung/package-name",
+  "description": "Package description.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "role": "Developer",
+      "name": "thuraaung2493",
+      "email": "thuraaung2493@gmail.com",
+      "homepage": "http://thuraaung2493.github.io/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Thuraaung\\Namespace\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Thuraaung\\Namespace\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^8.2"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.10",
+    "nunomaduro/larastan": "^2.0",
+    "orchestra/testbench": "^8.5",
+    "pestphp/pest": "^2.6"
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "8.2.4"
+    },
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php vendor/bin/testbench package:discover --ansi"
+    ],
+    "pint": [
+      "./vendor/bin/pint"
+    ],
+    "analyse": [
+      "./vendor/bin/phpstan analyse --memory-limit=2G"
+    ],
+    "test": [
+      "./vendor/bin/pest --parallel"
+    ],
+    "prepare": [
+      "@pint",
+      "@analyse",
+      "@test"
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
