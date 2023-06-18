@@ -1,6 +1,6 @@
 {
-  "name": "thuraaung/package-name",
-  "description": "Package description.",
+  "name": "thuraaung/startup",
+  "description": "Laravel project startup.",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -13,22 +13,26 @@
   ],
   "autoload": {
     "psr-4": {
-      "Thuraaung\\Namespace\\": "src/"
+      "Thuraaung\\Startup\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Thuraaung\\Namespace\\Tests\\": "tests/"
+      "Thuraaung\\Startup\\Tests\\": "tests/"
     }
   },
   "require": {
-    "php": "^8.2"
+    "php": "^8.2",
+    "thuraaung2493/laravel-api-helpers": "dev-main",
+    "thuraaung2493/laravel-make-files-tools": "dev-main",
+    "thuraaung2493/otp-generator": "dev-main",
+    "thuraaung2493/space-file-storage": "dev-main"
   },
   "require-dev": {
-    "laravel/pint": "^1.10",
-    "nunomaduro/larastan": "^2.0",
-    "orchestra/testbench": "^8.5",
-    "pestphp/pest": "^2.6"
+    "laravel/pint": "^1.10.2",
+    "nunomaduro/larastan": "^2.6.2",
+    "orchestra/testbench": "^8.5.6",
+    "pestphp/pest": "^2.6.3"
   },
   "config": {
     "sort-packages": true,
