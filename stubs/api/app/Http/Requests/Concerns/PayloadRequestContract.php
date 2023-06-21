@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Thuraaung\Authentication\Http\Requests\Concerns;
+namespace App\Http\Requests\Concerns;
 
 use Thuraaung\MakeFiles\Contracts\DataObjectContract;
 

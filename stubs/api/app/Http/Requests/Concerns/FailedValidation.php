@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Thuraaung\Authenication\Http\Requests\Concerns;
+namespace App\Http\Requests\Concerns;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;

@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Commands\Auth\EmailRegister;
-use App\Http\Requests\Auth\EmailRegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Contracts\Support\Responsable;
 use Thuraaung\ApiHelpers\Http\Responses\MessageResponse;
 
 use function trans;
 
-final class EmailRegisterController
+final class RegisterController
 {
     public function __construct(
-        private readonly EmailRegister $emailRegister
+        private readonly EmailRegister $command
     ) {
     }
 
-    public function __invoke(EmailRegisterRequest $request): Responsable
+    public function __invoke(RegisterRequest $request): Responsable
     {
-        $this->emailRegister->handle(
+        $this->command->handle(
             data: $request->payload(),
         );
 

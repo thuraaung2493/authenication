@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Thuraaung\Authentication\Commands;
 
+use App\DataObjects\Auth\EmailLoginCredentials;
+use App\Exceptions\EmailLoginException;
 use App\Models\User;
 use Laravel\Sanctum\NewAccessToken;
-use Thuraaung\Authentication\DataObjects\EmailLoginCredentials;
-use Thuraaung\Authentication\Enums\LoginType;
-use Thuraaung\Authentication\Exceptions\EmailLoginException;
 
 final readonly class EmailLogin
 {
@@ -16,8 +15,7 @@ final readonly class EmailLogin
     {
         /** @var ?User $user */
         $user = User::query()
-            ->where('login_type', LoginType::GMAIL->value)
-            ->where('email', $credentials->email)
+            ->whereGmailLogin($credentials->email)
             ->first();
 
         if ( ! $user || ! Hash::check($credentials->password, $user->password)) {

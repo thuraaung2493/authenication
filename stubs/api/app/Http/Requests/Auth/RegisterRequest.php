@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\DataObjects\Auth\EmailRegisterInfo;
 use App\Http\Requests\Concerns\FailedValidation;
-use App\DataObjects\EmailLoginCredentials;
 use App\Http\Requests\Concerns\PayloadRequestContract;
+use App\Rules\CheckEmailLoginUnique;
+use Illuminate\Foundation\Http\FormRequest;
 
-final class EmailLoginRequest extends FormRequest implements PayloadRequestContract
+final class RegisterRequest extends FormRequest implements PayloadRequestContract
 {
     use FailedValidation;
 
@@ -22,12 +22,17 @@ final class EmailLoginRequest extends FormRequest implements PayloadRequestContr
     public function rules(): array
     {
         return [
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::exists('users', 'email'),
+                new CheckEmailLoginUnique(),
             ],
             'password' => [
                 'required',
@@ -38,12 +43,13 @@ final class EmailLoginRequest extends FormRequest implements PayloadRequestContr
         ];
     }
 
-    public function payload(): EmailLoginCredentials
+    public function payload(): EmailRegisterInfo
     {
-        return EmailLoginCredentials::of(
+        return EmailRegisterInfo::of(
             attributes: [
-                'email' => $this->string('email')->toString(),
-                'password' => $this->string('password')->toString(),
+                "name" => $this->string('name')->toString(),
+                "email" => $this->string('email')->toString(),
+                "password" => $this->string('password')->toString(),
             ],
         );
     }

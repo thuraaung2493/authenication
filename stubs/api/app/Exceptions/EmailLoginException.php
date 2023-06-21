@@ -11,12 +11,16 @@ use Thuraaung\ApiHelpers\Http\Responses\ApiErrorResponse;
 
 final class EmailLoginException extends Exception
 {
-    public function render(): Responsable
+    public function render(): Responsable|bool
     {
-        return new ApiErrorResponse(
-            title: 'Email Login Failed!',
-            description: $this->message,
-            status: Status::from($this->code),
-        );
+        if (request()->isJson()) {
+            return new ApiErrorResponse(
+                title: 'Email Login Failed!',
+                description: $this->message,
+                status: Status::from($this->code),
+            );
+        }
+
+        return false;
     }
 }

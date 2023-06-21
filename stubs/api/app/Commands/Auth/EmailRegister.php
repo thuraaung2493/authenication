@@ -6,8 +6,9 @@ namespace App\Commands\Auth;
 
 use App\Commands\Otps\CreateOtp;
 use App\Commands\Otps\SendOtp;
-use App\DataObjects\Auth\EmailRegisterData;
+use App\DataObjects\Auth\EmailRegisterInfo;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 final readonly class EmailRegister
 {
@@ -17,19 +18,22 @@ final readonly class EmailRegister
     ) {
     }
 
-    public function handle(EmailRegisterData $data): void
+    public function handle(EmailRegisterInfo $data): void
     {
-        $user = User::query()->create(
-            attributes: $data->toArray(),
-        );
+        DB::transaction(function () use ($data): void {
 
-        $otp = $this->createOtp->handle(
-            email: $data->email,
-        );
+            $user = User::query()->create(
+                attributes: $data->toArray(),
+            );
 
-        $this->sendOtp->handle(
-            user: $user,
-            otp: $otp
-        );
+            $otp = $this->createOtp->handle(
+                email: $data->email,
+            );
+
+            $this->sendOtp->handle(
+                user: $user,
+                otp: $otp
+            );
+        });
     }
 }

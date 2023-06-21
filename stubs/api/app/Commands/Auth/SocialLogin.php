@@ -9,6 +9,8 @@ use App\Models\User;
 use Laravel\Sanctum\NewAccessToken;
 use Thuraaung\SpaceStorage\Facades\SpaceStorage;
 
+use function config;
+
 final readonly class SocialLogin
 {
     public function handle(SocialLoginInfo $data): NewAccessToken
@@ -51,8 +53,8 @@ final readonly class SocialLogin
             return null;
         }
 
-        return $this->fileStorage->upload(
-            folder: \strval(\config('folders.profiles')),
+        return SpaceStorage::upload(
+            folder: \strval(config('folders.profiles')),
             file: $profile,
         );
     }

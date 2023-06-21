@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DataObjects\V1\Auth;
+namespace App\DataObjects\Auth;
 
 use App\Enums\LoginType;
 use Illuminate\Support\Facades\Hash;
