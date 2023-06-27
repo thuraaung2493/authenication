@@ -1,5 +1,5 @@
 {
-  "name": "thuraaung/startup",
+  "name": "thuraaung2493/startup",
   "description": "Laravel project startup.",
   "type": "library",
   "license": "MIT",
@@ -23,6 +23,8 @@
   },
   "require": {
     "php": "^8.2",
+    "illuminate/console": "^10.13",
+    "illuminate/filesystem": "^10.13",
     "thuraaung2493/laravel-api-helpers": "dev-main",
     "thuraaung2493/laravel-make-files-tools": "dev-main",
     "thuraaung2493/otp-generator": "dev-main",
@@ -43,6 +45,13 @@
     "allow-plugins": {
       "pestphp/pest-plugin": true,
       "php-http/discovery": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Thuraaung\\Startup\\Providers\\StartupServiceProvider"
+      ]
     }
   },
   "scripts": {
