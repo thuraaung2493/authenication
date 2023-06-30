@@ -6,7 +6,9 @@ namespace Thuraaung\Startup\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use Thuraaung\Startup\Console\InstallCommand;
+use Thuraaung\Startup\Console\Commands\Install\InstallCommand;
+use Thuraaung\Startup\Console\Commands\Setup\SetupLarastanCommand;
+use Thuraaung\Startup\Console\Commands\Setup\SetupLaravelPintCommand;
 
 final class StartupServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -18,6 +20,8 @@ final class StartupServiceProvider extends ServiceProvider implements Deferrable
 
         $this->commands([
             InstallCommand::class,
+            SetupLarastanCommand::class,
+            SetupLaravelPintCommand::class,
         ]);
     }
 
@@ -25,6 +29,8 @@ final class StartupServiceProvider extends ServiceProvider implements Deferrable
     {
         return [
             InstallCommand::class,
+            SetupLarastanCommand::class,
+            SetupLaravelPintCommand::class,
         ];
     }
 }

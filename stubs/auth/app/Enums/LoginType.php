@@ -12,8 +12,6 @@ enum LoginType: string
 
     case FACEBOOK = 'facebook';
 
-    case GMAIL = 'gmail';
-
     public static function values(): array
     {
         return array_map(

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\DataObjects\Auth\EmailLoginCredentials;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Concerns\FailedValidation;
 use App\DataObjects\Auth\SocialLoginInfo;
-use App\Enums\LoginType;
 use App\Http\Requests\Concerns\PayloadRequestContract;
-use Illuminate\Validation\Rule;
 
 final class LoginRequest extends FormRequest implements PayloadRequestContract
 {
@@ -22,34 +19,6 @@ final class LoginRequest extends FormRequest implements PayloadRequestContract
     }
 
     public function rules(): array
-    {
-        if (LoginType::GMAIL->match($this->type)) {
-            return $this->emailLoginRules();
-        }
-
-        return $this->socialLoginRules();
-    }
-
-    private function emailLoginRules(): array
-    {
-        return [
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::exists(User::class, 'email'),
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'max:255',
-            ],
-        ];
-    }
-
-    private function socialLoginRules(): array
     {
         return [
             'name' => [
@@ -83,26 +52,7 @@ final class LoginRequest extends FormRequest implements PayloadRequestContract
         ];
     }
 
-    public function payload(): SocialLoginInfo|EmailLoginCredentials
-    {
-        if (LoginType::GMAIL->match($this->type)) {
-            return $this->getEmailLoginCredentials();
-        }
-
-        return $this->getSocialLoginInfo();
-    }
-
-    private function getEmailLoginCredentials(): EmailLoginCredentials
-    {
-        return EmailLoginCredentials::of(
-            attributes: [
-                'email' => $this->string('email')->toString(),
-                'password' => $this->string('password')->toString(),
-            ],
-        );
-    }
-
-    private function getSocialLoginInfo(): SocialLoginInfo
+    public function payload(): SocialLoginInfo
     {
         return SocialLoginInfo::of(
             attributes: [

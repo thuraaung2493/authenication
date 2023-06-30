@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataObjects\Auth;
 
-use Thuraaung\Authentication\Enums\LoginType;
+use App\Enums\LoginType;
 use Thuraaung\MakeFiles\Contracts\DataObjectContract;
 
 final readonly class SocialLoginInfo implements DataObjectContract

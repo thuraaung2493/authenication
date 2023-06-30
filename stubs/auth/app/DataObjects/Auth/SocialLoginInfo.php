@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataObjects\Auth;
 
-use App\Enums\LoginType as EnumsLoginType;
-use Thuraaung\Authentication\Enums\LoginType;
+use App\Enums\LoginType;
 use Thuraaung\MakeFiles\Contracts\DataObjectContract;
 
 final readonly class SocialLoginInfo implements DataObjectContract
@@ -14,7 +13,7 @@ final readonly class SocialLoginInfo implements DataObjectContract
         public string $name,
         public ?string $email,
         public ?string $phone,
-        public EnumsLoginType $loginType,
+        public LoginType $loginType,
         public string $loginId,
         public ?string $profile,
     ) {

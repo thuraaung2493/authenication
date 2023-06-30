@@ -9,7 +9,7 @@ use App\Commands\Auth\SocialLogin;
 use App\Enums\LoginType;
 use Illuminate\Contracts\Support\Responsable;
 use Thuraaung\ApiHelpers\Http\Responses\TokenResponse;
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests\Auth\LoginRequest;
 
 final readonly class LoginController
 {

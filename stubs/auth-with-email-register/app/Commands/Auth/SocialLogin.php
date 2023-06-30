@@ -4,70 +4,31 @@ declare(strict_types=1);
 
 namespace App\Commands\Auth;
 
+use App\Commands\Users\CreateUser;
+use App\Commands\Users\UpdateUser;
 use App\DataObjects\Auth\SocialLoginInfo;
-use App\Models\User;
+use App\Queries\Users\FetchUserBySocialType;
 use Laravel\Sanctum\NewAccessToken;
-use Thuraaung\SpaceStorage\Facades\SpaceStorage;
-
-use function config;
 
 final readonly class SocialLogin
 {
+    public function __construct(
+        private FetchUserBySocialType $fetchUserBySocialType,
+        private CreateUser $createUser,
+        private UpdateUser $updateUser,
+    ) {
+    }
+
     public function handle(SocialLoginInfo $data): NewAccessToken
     {
-        /** @var ?User $user */
-        $user = User::query()->whereSocialLogin(
-            type: $data->loginType,
-            id: $data->loginId
-        )->first();
+        $user = $this->fetchUserBySocialType->handle($data->loginType, $data->loginId);
 
         if ($user) {
-            $this->updateUser($user, $data);
+            $this->updateUser->handle($user, $data);
         } else {
-            $user = $this->createUser($data);
+            $user = $this->createUser->handle($data);
         }
 
         return $user->createToken(strval($data->loginId));
-    }
-
-    private function createUser(SocialLoginInfo $data): User
-    {
-        $profile = $this->createProfile($data->profile);
-
-        return User::query()->create([
-            ...$data->toArray(),
-            'profile' => $profile
-        ]);
-    }
-
-    private function updateUser(User $user, SocialLoginInfo  $data): void
-    {
-        $user->update($data->toArray());
-
-        $this->updateProfile($user, $data->profile);
-    }
-
-    private function createProfile(string|null $profile): ?string
-    {
-        if (null === $profile) {
-            return null;
-        }
-
-        return SpaceStorage::upload(
-            folder: \strval(config('folders.profiles')),
-            file: $profile,
-        );
-    }
-
-    private function updateProfile(User $user, string|null $profile): bool
-    {
-        if (null === $profile) {
-            return false;
-        }
-
-        return SpaceStorage::update(
-            oldPath: \strval($user->getRawOriginal('profile')),
-            file: $profile
-        );
     }
 }

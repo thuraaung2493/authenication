@@ -18,4 +18,11 @@ return [
 
         'email_not_verified' => 'This user is already register but still need verify process.',
     ],
+
+    'logout' => [
+
+        'success' => 'Logout successful.',
+
+        'fail' => 'Logout failed.',
+    ],
 ];
