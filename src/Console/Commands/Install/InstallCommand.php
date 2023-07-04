@@ -15,8 +15,8 @@ final class InstallCommand extends Command
 {
     use ComposerPackageManagement;
     use FileManagement;
+    use InstallsAdminModule;
     use InstallsAuthModule;
-    use InstallsExceptionModule;
     use NodePackageManagement;
 
     /**
@@ -36,14 +36,14 @@ final class InstallCommand extends Command
      */
     protected $description = "Startup a laravel project";
 
-    protected array $modules = ['auth', 'exception'];
+    protected array $modules = ['auth', 'admin'];
 
     public function handle(): int|null
     {
         if ('auth' === $this->argument('module')) {
             return $this->installAuthModule();
-        } elseif ('exception' === $this->argument('module')) {
-            return $this->installExceptionModule();
+        } elseif ('admin' === $this->argument('module')) {
+            return $this->installAdminModule();
         }
 
         $this->components->error('Invalid module. Supported modules are [auth,excetpion].');

@@ -8,7 +8,7 @@ use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
-use JustSteveKing\StatusCode\Http;
+use Thuraaung\ApiHelpers\Http\Enums\Status;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\postJson;
@@ -27,12 +27,12 @@ test('If there are no app keys, it is not possible to register with an email', f
     postJson(
         uri: action(RegisterController::class),
         data: [],
-    )->assertStatus(Http::FORBIDDEN->value)
+    )->assertStatus(Status::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
-                ->where('status', Http::FORBIDDEN->value)
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
+                ->where('status', Status::FORBIDDEN->value)
         );
 });
 
@@ -42,12 +42,12 @@ test('If the app keys are outdated, it is not possible to register with an email
     postJson(
         uri: action(RegisterController::class),
         data: [],
-    )->assertStatus(Http::UPGRADE_REQUIRED->value)
+    )->assertStatus(Status::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
-                ->where('status', Http::UPGRADE_REQUIRED->value)
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
+                ->where('status', Status::UPGRADE_REQUIRED->value)
         );
 });
 
@@ -60,7 +60,7 @@ it('returns the validation errors when name dose not meet requirements', functio
             'password' => 'password',
         ],
     )
-        ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
+        ->assertStatus(Status::UNPROCESSABLE_CONTENT->value)
         ->assertJson(errorAssertJson())
         ->assertJsonStructure(validationJsonStructure('name'));
 })->with('validation_names');
@@ -74,7 +74,7 @@ it('returns the validation errors when email dose not meet requirements', functi
             'password' => 'password',
         ]
     )
-        ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
+        ->assertStatus(Status::UNPROCESSABLE_CONTENT->value)
         ->assertJson(errorAssertJson())
         ->assertJsonStructure(validationJsonStructure('email'));
 })->with('validation_emails');
@@ -91,12 +91,12 @@ it('returns the validation errors when email is duplicate', function (): void {
             'password' => 'password',
         ],
     )
-        ->assertStatus(Http::NOT_ACCEPTABLE->value)
+        ->assertStatus(Status::NOT_ACCEPTABLE->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.email_not_verified'))
-                ->where('description', \trans('message.exceptions.email_not_verified'))
-                ->where('status', Http::NOT_ACCEPTABLE->value)
+                ->where('title', \trans('auth.exceptions.title.email_not_verified'))
+                ->where('description', \trans('auth.email_not_verified'))
+                ->where('status', Status::NOT_ACCEPTABLE->value)
         );
 });
 
@@ -109,7 +109,7 @@ it('returns the validation errors when password dose not meet requirements', fun
             'password' => $password,
         ]
     )
-        ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
+        ->assertStatus(Status::UNPROCESSABLE_CONTENT->value)
         ->assertJson(errorAssertJson())
         ->assertJsonStructure(validationJsonStructure('password'));
 })->with('validation_passwords');
@@ -125,7 +125,7 @@ it('returns the correct status code and sends an OTP code via email', function (
             'password' => 'password',
         ],
     )
-        ->assertStatus(Http::OK->value);
+        ->assertStatus(Status::OK->value);
 
     Mail::assertQueued(SendOtpCode::class);
 });
@@ -143,10 +143,10 @@ it('returns the correct payload, the correct data exists in database and sends a
         uri: action(RegisterController::class),
         data: $data,
     )
-        ->assertStatus(Http::OK->value)
+        ->assertStatus(Status::OK->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('message', \trans('message.register.success'))
+                ->where('message', \trans('auth.register'))
                 ->whereType('message', 'string')
         );
 

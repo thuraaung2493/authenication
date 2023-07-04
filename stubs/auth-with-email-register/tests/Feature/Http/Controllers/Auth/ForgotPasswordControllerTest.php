@@ -8,7 +8,7 @@ use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
-use JustSteveKing\StatusCode\Http;
+use Thuraaung\ApiHelpers\Http\Enums\Status;
 
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeaders;
@@ -27,12 +27,12 @@ test('If there are no app keys, it is not possible to forgot password', function
         uri: action(ForgotPasswordController::class),
         data: [],
     )
-        ->assertStatus(Http::FORBIDDEN->value)
+        ->assertStatus(Status::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
-                ->where('status', Http::FORBIDDEN->value)
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
+                ->where('status', Status::FORBIDDEN->value)
         );
 });
 
@@ -43,12 +43,12 @@ test('If the app keys are outdated, it is not possible to forgot password', func
         uri: action(ForgotPasswordController::class),
         data: [],
     )
-        ->assertStatus(Http::UPGRADE_REQUIRED->value)
+        ->assertStatus(Status::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
-                ->where('status', Http::UPGRADE_REQUIRED->value)
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
+                ->where('status', Status::UPGRADE_REQUIRED->value)
         );
 });
 
@@ -57,7 +57,7 @@ it('returns the validation errors when email dose not meet requirements', functi
         uri: action(ForgotPasswordController::class),
         data: ['email' => $email],
     )
-        ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
+        ->assertStatus(Status::UNPROCESSABLE_CONTENT->value)
         ->assertJson(errorAssertJson())
         ->assertJsonStructure(validationJsonStructure('email'));
 })->with('validation_emails');
@@ -67,7 +67,7 @@ it('returns the validation errors when email dose not exists in database', funct
         uri: action(ForgotPasswordController::class),
         data: ['email' => 'notexists@gmail.com'],
     )
-        ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
+        ->assertStatus(Status::UNPROCESSABLE_CONTENT->value)
         ->assertJson(errorAssertJson())
         ->assertJsonStructure(validationJsonStructure('email'));
 });
@@ -81,7 +81,7 @@ it('returns the correct status code and sends an OTP code via email', function (
         uri: action(ForgotPasswordController::class),
         data: ['email' => $user->email],
     )
-        ->assertStatus(Http::OK->value);
+        ->assertStatus(Status::OK->value);
 
     Mail::assertQueued(SendOtpCode::class);
 });
@@ -95,11 +95,12 @@ it('returns the correct payload and sends an OTP code via email', function (): v
         uri: action(ForgotPasswordController::class),
         data: ['email' => $user->email],
     )
-        ->assertStatus(Http::OK->value)
+        ->assertStatus(Status::OK->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('message', \trans('message.password.forgot'))
+                ->where('message', \trans('auth.forgot_password'))
                 ->whereType('message', 'string')
+                ->where('status', Status::OK->value)
         );
 
     $otp = Otp::query()->where('email', $user->email)->first();

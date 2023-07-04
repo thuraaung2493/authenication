@@ -46,7 +46,7 @@ final class Handler extends ExceptionHandler
 
         $this->renderable(function (AuthenticationException $e) {
             return new ApiErrorResponse(
-                title: strval(trans('exceptions.titles.unauthenicated')),
+                title: strval(trans('exceptions.titles.unauthenticated')),
                 description: $e->getMessage(),
                 status: Status::UNAUTHORIZED,
             );

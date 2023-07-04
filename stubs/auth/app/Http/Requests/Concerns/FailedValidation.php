@@ -15,7 +15,7 @@ trait FailedValidation
     protected function failedValidation(Validator $validator): void
     {
         $response = new ApiValidationErrorsResponse(
-            title: trans('message.exceptions.title.validation'),
+            title: trans('auth.exceptions.title.validation'),
             errors: $validator->errors(),
         );
 

@@ -21,8 +21,8 @@ final class LogoutController
     {
         return new MessageResponse(
             message: $this->command->handle() ?
-                trans('message.logout.success') :
-                trans('message.logout.fail'),
+                trans('auth.logout.success') :
+                trans('auth.logout.fail'),
         );
     }
 }

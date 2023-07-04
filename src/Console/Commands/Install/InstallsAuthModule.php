@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Thuraaung\Startup\Console\Commands\Install;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 
 trait InstallsAuthModule
 {
@@ -18,8 +17,6 @@ trait InstallsAuthModule
         $this->components->info("Installing Auth Module " . $with);
 
         $folder = $this->option('email') ? 'auth-with-email-register' : 'auth';
-
-        $this->setupLangFile($folder);
 
         $this->setupRoutes($folder);
 
@@ -50,8 +47,6 @@ trait InstallsAuthModule
             return Command::FAILURE;
         }
 
-        $this->removeScaffoldingUnnecessaryForAuthModule();
-
         $this->components->info('Auth module scaffolding installed successfully.');
 
         return Command::SUCCESS;
@@ -62,10 +57,6 @@ trait InstallsAuthModule
         if ( ! $this->option('pest')) {
             return false;
         }
-
-        $files = new Filesystem();
-
-        $files->ensureDirectoryExists(base_path('tests/Feature'));
 
         $this->removeComposerPackages(['phpunit/phpunit'], true);
 
@@ -93,6 +84,10 @@ trait InstallsAuthModule
             target: base_path('tests/Helpers.php'),
         );
 
+        $this->updateComposerFile(function (&$packages): void {
+            $packages['scripts']['test'] = "./vendor/bin/pest --colors=always --parallel";
+        });
+
         return true;
     }
 
@@ -119,22 +114,8 @@ trait InstallsAuthModule
         }
     }
 
-    private function setupLangFile(string $folder): void
-    {
-        $this->copyFile(
-            source: __DIR__ . '/../../../../stubs/' . $folder . '/lang/en/auth.php',
-            target: base_path('lang/en/auth.php'),
-        );
-    }
-
     private function setupRoutes(string $folder): void
     {
-        // Providers
-        $this->copyFile(
-            source: __DIR__ . '/../../../../stubs/auth/app/Providers/RouteServiceProvider.php',
-            target: app_path('Providers/RouteServiceProvider.php'),
-        );
-
         $this->copyDirectory(
             source: __DIR__ . '/../../../../stubs/' . $folder . '/routes/api',
             target: base_path('routes/api')
@@ -228,6 +209,11 @@ trait InstallsAuthModule
             target: database_path('factories/UserFactory.php'),
         );
 
+        $this->copyDirectory(
+            source: __DIR__ . '/../../../../stubs/' . $folder . '/app/Models',
+            target: app_path('Models'),
+        );
+
         if ($this->option('email')) {
             $this->copyFile(
                 source: __DIR__ . '/../../../../stubs/' . $folder . '/databases/migrations/0000_00_00_000000_create_otps_table.php',
@@ -237,11 +223,6 @@ trait InstallsAuthModule
             $this->copyFile(
                 source: __DIR__ . '/../../../../stubs/' . $folder . '/databases/factories/OtpFactory.php',
                 target: database_path('factories/OtpFactory.php'),
-            );
-
-            $this->copyFile(
-                source: __DIR__ . '/../../../../stubs/' . $folder . '/app/Models/Otp.php',
-                target: app_path('Models/Otp.php'),
             );
         }
     }
@@ -257,34 +238,5 @@ trait InstallsAuthModule
             source: __DIR__ . '/../../../../stubs/' . $folder . '/resources/views/emails/send-otp.blade.php',
             target: resource_path('views/emails/send-otp.blade.php'),
         );
-    }
-
-    protected function removeScaffoldingUnnecessaryForAuthModule(): void
-    {
-        $files = new Filesystem();
-
-        $this->replaceInFile("require base_path('routes/console.php');", '', app_path('Console/Kernel.php'));
-        $this->replaceInFile('$this->load(__DIR__ . \'/Commands\');' . PHP_EOL . PHP_EOL, '$this->load(__DIR__ . \'/Commands\');', app_path('Console/Kernel.php'));
-
-        // Remove routes files...
-        $files->delete(base_path('routes/api.php'));
-        $files->delete(base_path('routes/channels.php'));
-        $files->delete(base_path('routes/console.php'));
-        $files->delete(base_path('routes/web.php'));
-
-        // Remove frontend related files...
-        $files->delete(base_path('package.json'));
-        $files->delete(base_path('vite.config.js'));
-
-        // Remove Laravel "welcome" view...
-        $files->delete(resource_path('views/welcome.blade.php'));
-        $files->put(resource_path('views/.gitkeep'), PHP_EOL);
-
-        // Remove CSS and JavaScript directories...
-        $files->deleteDirectory(resource_path('css'));
-        $files->deleteDirectory(resource_path('js'));
-
-        // Remove Unit test directory...
-        $files->deleteDirectory(base_path('tests/Unit'));
     }
 }

@@ -27,8 +27,8 @@ test('If there are no app keys, it is not possible to log in with an email', fun
     )->assertStatus(Status::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
                 ->where('status', Status::FORBIDDEN->value)
         );
 });
@@ -42,8 +42,8 @@ test('If the app keys are outdated, it is not possible to log in with an email',
     )->assertStatus(Status::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
                 ->where('status', Status::UPGRADE_REQUIRED->value)
         );
 });
@@ -100,8 +100,8 @@ test('The login attempt must fail when the password is incorrect', function (): 
         ->assertStatus(Status::UNAUTHORIZED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', 'Login Failed!')
-                ->where('description', 'User credentials did not match!')
+                ->where('title', 'Email Login Failed!')
+                ->where('description', trans('auth.login_failed'))
                 ->where('status', Status::UNAUTHORIZED->value)
         );
 });
@@ -119,8 +119,8 @@ test('The login attempt must fail when the email is not verified', function (): 
         ->assertStatus(Status::UNAUTHORIZED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', 'Login Failed!')
-                ->where('description', 'Your email is not verified yet!')
+                ->where('title', 'Email Login Failed!')
+                ->where('description', trans('auth.email_not_verified'))
                 ->where('status', Status::UNAUTHORIZED->value)
         );
 });
@@ -153,5 +153,7 @@ it('returns the correct payload', function (): void {
             fn (AssertableJson $json) => $json
                 ->has('token')
                 ->whereType('token', 'string')
+                ->where('message', 'Success.')
+                ->where('status', Status::OK->value)
         );
 });

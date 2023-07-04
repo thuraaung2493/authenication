@@ -32,7 +32,7 @@ final readonly class EmailLogin
 
         if (null === $user->email_verified_at) {
             throw new EmailLoginException(
-                message: trans('auth.email_verified'),
+                message: trans('auth.email_not_verified'),
                 code: Status::UNAUTHORIZED->value,
             );
         }

@@ -8,7 +8,7 @@ return [
 
         'not_found' => 'Not Found Exception!',
 
-        'unauthenicated' => 'Unauthenticated!',
+        'unauthenticated' => 'Unauthenticated!',
 
         'unauthorized' => 'Unauthorized!',
 

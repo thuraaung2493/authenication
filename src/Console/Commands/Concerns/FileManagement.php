@@ -6,10 +6,10 @@ namespace Thuraaung\Startup\Console\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
 
-use function file_put_contents;
 use function str_replace;
-use function file_get_contents;
 use function copy;
+use function Safe\file_get_contents;
+use function Safe\file_put_contents;
 
 trait FileManagement
 {
@@ -19,6 +19,14 @@ trait FileManagement
     protected function replaceInFile(string $search, string $replace, string $path): void
     {
         file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
+    }
+
+    /**
+     * Append data to a given file.
+     */
+    protected function appendToFile(string $path, string $data): void
+    {
+        file_put_contents($path, $data, FILE_APPEND);
     }
 
     /**

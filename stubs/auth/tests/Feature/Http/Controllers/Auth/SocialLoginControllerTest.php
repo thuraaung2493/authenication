@@ -37,8 +37,8 @@ test('If there are no app keys, it is not possible to social login', function ()
         ->assertStatus(Status::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
                 ->where('status', Status::FORBIDDEN->value)
         );
 });
@@ -52,8 +52,8 @@ test('If the app keys are outdated, it is not possible to social login', functio
         ->assertStatus(Status::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
                 ->where('status', Status::UPGRADE_REQUIRED->value)
         );
 });
@@ -167,6 +167,8 @@ it('returns the correct payload when social login with profile', function ($type
             fn (AssertableJson $json) => $json
                 ->has('token')
                 ->whereType('token', 'string')
+                ->where('message', 'Success.')
+                ->where('status', Status::OK->value)
         );
 
     assertDatabaseCount('users', 1);
@@ -186,6 +188,8 @@ it('returns the correct payload when social login without profile', function ($t
             fn (AssertableJson $json) => $json
                 ->has('token')
                 ->whereType('token', 'string')
+                ->where('message', 'Success.')
+                ->where('status', Status::OK->value)
         );
 
     assertDatabaseCount('users', 1);

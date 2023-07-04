@@ -32,6 +32,7 @@ final class SetupLarastanCommand extends Command
     {
         $this->components->info('Setting up the Larastan configuration ...');
 
+        return Command::FAILURE;
         $this->copyFile(
             source: __DIR__ . '/../../../../stubs/larastan/phpstan.neon',
             target: base_path('phpstan.neon'),

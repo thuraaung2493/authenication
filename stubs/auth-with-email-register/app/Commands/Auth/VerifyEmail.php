@@ -38,14 +38,14 @@ final readonly class VerifyEmail
     {
         if ( ! $otp) {
             throw new InvalidOtpException(
-                message: strval(trans('message.exceptions.invalid_otp')),
+                message: strval(trans('auth.invalid_otp')),
                 code: Status::UNPROCESSABLE_CONTENT->value,
             );
         }
 
         if ($otp->expired_at->lessThan(now())) {
             throw new InvalidOtpException(
-                message: strval(trans('message.exceptions.otp_expired')),
+                message: strval(trans('auth.otp_expired')),
                 code: Status::UNPROCESSABLE_CONTENT->value,
             );
         }

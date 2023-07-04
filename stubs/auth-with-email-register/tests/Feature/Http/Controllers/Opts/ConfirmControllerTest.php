@@ -31,8 +31,8 @@ test('If there are no app keys, it is not possible to confirm otp', function ():
         ->assertStatus(Http::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
                 ->where('status', Http::FORBIDDEN->value)
         );
 });
@@ -46,8 +46,8 @@ test('If the app keys are outdated, it is not possible to confirm otp', function
         ->assertStatus(Http::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
                 ->where('status', Http::UPGRADE_REQUIRED->value)
         );
 });
@@ -81,8 +81,8 @@ it('should not confirm otp when otp code did not match in production env', funct
         ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.invalid_otp'))
-                ->where('description', \trans('message.exceptions.invalid_otp'))
+                ->where('title', \trans('auth.exceptions.title.invalid_otp'))
+                ->where('description', \trans('auth.invalid_otp'))
                 ->where('status', Http::UNPROCESSABLE_ENTITY->value)
         );
 });

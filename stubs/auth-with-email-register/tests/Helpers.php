@@ -18,7 +18,7 @@ function errorAssertJson()
 {
     return
         fn (AssertableJson $json) => $json
-            ->where('title', 'Validation Error!')
+            ->where('title', \trans('auth.exceptions.title.validation'))
             ->where('status', Status::UNPROCESSABLE_CONTENT->value)
             ->has('errors')
             ->whereType('errors', 'array');

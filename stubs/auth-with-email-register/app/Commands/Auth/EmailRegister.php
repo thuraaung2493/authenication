@@ -9,6 +9,7 @@ use App\Exceptions\Auth\EmailRegisterException;
 use App\Models\User;
 use App\Queries\Users\FetchGmailUser;
 use Illuminate\Support\Facades\DB;
+use Thuraaung\ApiHelpers\Http\Enums\Status;
 
 use function trans;
 
@@ -50,7 +51,7 @@ final readonly class EmailRegister
         if (null !== $this->fetchGmailUser->handle($email)) {
             throw new EmailRegisterException(
                 message: trans('auth.exceptions.email_not_verified'),
-                code: Http::NOT_ACCEPTABLE->value,
+                code: Status::NOT_ACCEPTABLE->value,
             );
         }
     }

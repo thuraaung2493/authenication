@@ -1,0 +1,6 @@
+/**
+* Admin Routes
+*/
+Route::prefix('admin')->as('admin:')->group(
+    base_path('/routes/api/admin/routes.php')
+);

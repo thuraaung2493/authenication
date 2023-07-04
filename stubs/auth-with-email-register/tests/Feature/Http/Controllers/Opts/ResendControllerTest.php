@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Opts\ResendController;
+use App\Http\Controllers\Auth\OtpResendController;
 use App\Mail\SendOtpCode;
 use App\Models\Otp;
 use App\Models\User;
@@ -25,13 +25,13 @@ test('If there are no app keys, it is not possible to resend otp', function (): 
     ]);
 
     postJson(
-        uri: action(ResendController::class),
+        uri: action(OtpResendController::class),
     )
         ->assertStatus(Http::FORBIDDEN->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.unauthorized'))
-                ->where('description', \trans('message.exceptions.permission_denied'))
+                ->where('title', \trans('auth.exceptions.title.unauthorized'))
+                ->where('description', \trans('auth.permission_denied'))
                 ->where('status', Http::FORBIDDEN->value)
         );
 });
@@ -40,13 +40,13 @@ test('If the app keys are outdated, it is not possible to resend otp', function 
     withAppKeyHeaders(true);
 
     postJson(
-        uri: action(ResendController::class),
+        uri: action(OtpResendController::class),
     )
         ->assertStatus(Http::UPGRADE_REQUIRED->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('title', \trans('message.exceptions.title.outdated'))
-                ->where('description', \trans('message.exceptions.invalid_app_keys'))
+                ->where('title', \trans('auth.exceptions.title.outdated'))
+                ->where('description', \trans('auth.invalid_app_keys'))
                 ->where('status', Http::UPGRADE_REQUIRED->value)
         );
 });
@@ -55,7 +55,7 @@ it('returns the validation errors when email dose not meet requirements', functi
     User::factory()->create(['email' => 'test@gmail.com']);
 
     postJson(
-        uri: action(ResendController::class),
+        uri: action(OtpResendController::class),
         data: ['email' => $email],
     )
         ->assertStatus(Http::UNPROCESSABLE_ENTITY->value)
@@ -70,7 +70,7 @@ it('returns the correct status code and sends an OTP code via email', function (
     $user = User::factory()->create(['email' => 'test@gmail.com']);
 
     postJson(
-        uri: action(ResendController::class),
+        uri: action(OtpResendController::class),
         data: ['email' => $user->email],
     )
         ->assertStatus(Http::OK->value);
@@ -88,13 +88,13 @@ it('returns the correct payload and sends an OTP code via email', function (): v
     $otp = Otp::factory()->create(['email' => $user->email, 'expired_at' => now()->subMinute()]);
 
     postJson(
-        uri: action(ResendController::class),
+        uri: action(OtpResendController::class),
         data: ['email' => $user->email],
     )
         ->assertStatus(Http::OK->value)
         ->assertJson(
             fn (AssertableJson $json) => $json
-                ->where('message', \trans('message.otp-resend.success'))
+                ->where('message', \trans('auth.otp_resend'))
                 ->whereType('message', 'string')
         );
 
